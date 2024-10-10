@@ -12,6 +12,11 @@ void activeWait(const int a){
 }
 
 int main(int argc, const char * argv[]){
+  __pid_t pid = getpid();
+  fork();
+  if(pid == getpid()) printf("original\n");
+  else printf("new\n");
+  return 0;
   srand(time(NULL));
   int ran=rand();
   for(int i=10;i<ran;i++){
