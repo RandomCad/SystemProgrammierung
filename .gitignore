@@ -3,4 +3,4 @@
 *.obj
 *.hex
 *out
-*/build/*
+SysProg/h1/build/
