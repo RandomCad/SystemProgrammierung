@@ -8,43 +8,93 @@
 #include <sys/wait.h>
 
 #define FIFO_PATH "/tmp/myfifo" // Path to the named pipe
+#define FIFO_PATH1 "/tmp/myfifo1" // Path to the named pipe
+
+void activeWait(const int a){
+  for(int i=0;i<a;i++){
+    for(int j=0;j<a;j++){
+      --j;++j;
+    }
+  }
+}
+#define ITTER 10
 
 void writer_process() {
-   int fd;
-   char message[] = "Hello, named pipe!";
+  int fdRead, fdWrite;
+  char message[] = "Hello, named pipe!";
+  char buffer[100];
 
-   // Open the named pipe for writing
-   fd = open(FIFO_PATH, O_WRONLY);
-   if (fd == -1) {
+   // Open the named pipe for reading
+   fdRead = open(FIFO_PATH, O_RDONLY);
+   if (fdRead == -1) {
       perror("open");
       exit(EXIT_FAILURE);
    }
 
-   // Write the message to the named pipe
-   write(fd, message, strlen(message) + 1);
-   printf("Message sent: %s", message);
+   // Open the named pipe for writing
+   fdWrite = open(FIFO_PATH1, O_WRONLY);
+   if (fdWrite == -1) {
+      perror("open");
+      exit(EXIT_FAILURE);
+   }
 
-   // Close the named pipe
-   close(fd);
+  int num = 0;
+  srand(getpid());
+  for(int i = rand()%ITTER; i > 0; --i){
+    activeWait(rand()%ITTER);
+    char add = rand() & 0xff;
+    num += add;
+    printf(".");
+    write(fdWrite,&add,1);
+  }
+
+  close(fdWrite);
+
+  char ad;
+  while(read(fdRead, &ad, 1)) num += ad;
+  printf("final number1 %d.\n", num);
+
+  // Close the named pipe
+  close(fdRead);
 }
 
 void reader_process() {
-   int fd;
+   int fdRead, fdWrite;
    char buffer[100];
 
-   // Open the named pipe for reading
-   fd = open(FIFO_PATH, O_RDONLY);
-   if (fd == -1) {
+   // Open the named pipe for writing
+   fdWrite = open(FIFO_PATH, O_WRONLY);
+   if (fdWrite == -1) {
       perror("open");
       exit(EXIT_FAILURE);
    }
 
-   // Read the message from the named pipe
-   read(fd, buffer, sizeof(buffer));
-   printf("Message received: %s", buffer);
+   // Open the named pipe for reading
+   fdRead = open(FIFO_PATH1, O_RDONLY);
+   if (fdRead == -1) {
+      perror("open");
+      exit(EXIT_FAILURE);
+   }
+
+  int num = 0;
+  srand(getpid());
+  
+  for(int i = rand()%ITTER; i > 0; --i){
+    activeWait(rand()%ITTER);
+    char add = rand() & 0xff;
+    num += add;
+    printf(".");
+    //write(fdWrite,&add,1);
+  }
+  
+  close(fdWrite);
+
+  char ad;
+  while(read(fdRead, &ad, 1)) num += ad;
+  printf("final number2 %d.\n", num);
 
    // Close the named pipe
-   close(fd);
+   close(fdRead);
 }
 
 int main() {
@@ -52,6 +102,7 @@ int main() {
 
    // Create the named pipe
    mkfifo(FIFO_PATH, 0666);
+   mkfifo(FIFO_PATH1, 0666);
 
    // Fork a child process
    pid = fork();
