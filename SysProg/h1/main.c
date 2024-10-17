@@ -36,7 +36,7 @@ void activeWait(const int a){
 #endif // Beendet den Bereich, auf den sich der IFNDEF bezieht.
 
 //Erstellung eines Makros zur weiteren Verwendung
-#define PRINTING(VALUE) for (int i = 0; i < am; i++){ /*Schleife zur Ausgabe eines Zeichens (am heufig)*/. \
+#define PRINTING(VALUE) for (int i = 0; i < am; i++){ /*Schleife zur Ausgabe eines Zeichens (am heufig)*/ \
         activeWait((rand()%1000)*ZWISCHENSTOP); /*wartet eine zufällige Zeit. Mit Zwischenstopp wird ein Verlängerungs- oder Verkürzungsfaktor angegeben.*/\
         semop(semid,&buf,1); /*Erhalte die Semaphore. Wenn sie gerade verwendet wird, wird gewartet */\
         for (int rand_Name=0; rand_Name < ERWARTUNG_ANZAHL; rand_Name++){ /*führt zur Ausgabe von ERWARTET_ANZAHL mit vieler Zeichen*/\
@@ -58,7 +58,7 @@ int main(int argc, const char * argv[]){
   const int am = 100;
 
   //Erstellung oder Beschaffung der Semaphore. Nete Umgebung wird angenommen -> keine Prüfung
- 	int		semid = semget(ftok("/home/prog/test", 1), 1, IPC_CREAT | 0777);;			/* return value from semget() */
+ 	int		semid = semget(ftok("/dev/smh", 1), 1, IPC_CREAT | 0777);;			/* return value from semget() */
   
   //Initialisiere die Semaphore mit dem Wert 1.
   //Damit kann die Semaphore beim ersten Aufruf betreten werden.
