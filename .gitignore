@@ -1,0 +1,6 @@
+/Sys/*.png
+*.eep.hex
+*.obj
+*.hex
+*out
+*/build/*
