@@ -4,3 +4,7 @@
 *.hex
 *out
 SysProg/h1/build/
+SysProg/h2/Pro1
+SysProg/h2/Pro2
+SysProg/h2/cli
+SysProg/h2/serv
