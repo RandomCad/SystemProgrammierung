@@ -7,6 +7,17 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 int main(int argc, const char *argv[]){
+  ///CLI Parsing:
+  if(argc != 3){
+    printf("Pleas give the IP in the -ip option");
+    exit(EXIT_FAILURE);
+  }
+  const char *IP;
+  for (argv++; *argv; ++argv) {
+    if(!strcmp(*argv, "-ip")){
+      IP = *(++argv);
+    }
+  }
   printf("Hello world im a client. %d\n", getpid());
   const int fd = socket(AF_INET,SOCK_STREAM,0);
   if (fd == -1){
@@ -16,7 +27,7 @@ int main(int argc, const char *argv[]){
 
   struct sockaddr_in add;
   add.sin_family = AF_INET;
-  inet_aton("127.0.0.1", &add.sin_addr);
+  inet_aton(IP, &add.sin_addr);
   add.sin_port = 5001;
   if(connect(fd, (const struct sockaddr*) &add, sizeof(struct sockaddr_in))){
     printf("Faild to connect socket. errno: %d", errno);
